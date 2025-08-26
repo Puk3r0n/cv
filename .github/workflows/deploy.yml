@@ -1,0 +1,42 @@
+# Название рабочего процесса, которое будет отображаться в GitHub
+name: Deploy Resume to GitHub Pages
+
+# Триггер: запускать процесс при каждом пуше в ветку 'main'
+on:
+  push:
+    branches: ["main"]
+
+# Разрешения для токена, чтобы workflow мог деплоить на GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Задачи (jobs), которые нужно выполнить
+jobs:
+  # Название задачи
+  deploy:
+    # Указываем, что задача будет выполняться на последней версии Ubuntu
+    runs-on: ubuntu-latest
+    
+    # Шаги, из которых состоит задача
+    steps:
+      # 1. Шаг "Checkout": скачивает код из репозитория
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Шаг "Setup Pages": настраивает окружение для сборки GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      # 3. Шаг "Upload artifact": собирает файлы (всю папку) в "артефакт" для деплоя
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Загружать из корневой папки
+          path: '.'
+
+      # 4. Шаг "Deploy": разворачивает собранный артефакт на GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
